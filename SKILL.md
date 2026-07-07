@@ -1,28 +1,28 @@
 ---
 name: expo-react-native-pr-review
-description: Review Expo / React Native pull requests (expo-router, React Query, NativeWind) against a weighted, reliability-first rubric — request timeouts, data-first rendering, layer architecture, list performance, React Query discipline, TypeScript strictness, error handling, images, styling, offline/security, and accessibility. Produces a score and a merge recommendation. Use when reviewing a pull request, diff, or code changes in a React Native / Expo app, or when the user asks for a code review, PR review, or audit of mobile app code.
+description: Review Expo / React Native pull requests (expo-router, React Query, NativeWind) against a weighted, reliability-first rubric — request timeouts, data-first rendering, feature-first architecture & layer direction, React Query discipline, server state, TypeScript strictness, error handling, images, styling, and offline/security. Produces a score and a merge recommendation. Use when reviewing a pull request, diff, or code changes in a React Native / Expo app, or when the user asks for a code review, PR review, or audit of mobile app code.
 ---
 
 # Expo / React Native PR Review
 
-A 10-rule weighted rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. It scores a diff against twelve rules covering the three failure modes RN apps are most prone to — **latency**, **availability** (white/blank screens, hangs), and **broken offline behavior** — plus architecture, type safety, and accessibility. Each rule has a **penalty** per violation and a **reward** for correct implementation; the review ends with a **net score** and a **merge recommendation**.
+A 10-rule weighted rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. It scores a diff against ten rules covering the three failure modes RN apps are most prone to — **latency**, **availability** (white/blank screens, hangs), and **broken offline behavior** — plus feature-first architecture, type safety, and styling. Each rule has a **penalty** per violation and a **reward** for correct implementation; the review ends with a **net score** and a **merge recommendation**.
 
 **Stack assumptions:** `expo` (expo-router), `react-native`, `@tanstack/react-query`, `nativewind`, a persisted offline-first query cache, and native SDKs (e.g. Sendbird). Rules degrade gracefully for any RN app; adjust the examples to your stack.
 
 ## Scoring rubric
 
-| #  | Rule                                          | Penalty / occurrence | Reward |
-| -- | --------------------------------------------- | -------------------- | ------ |
-| 1  | Bounded network requests (timeout/abort)      | −1000                | +10    |
-| 2  | Data-first rendering (no blank screens)       | −500                 | +50    |
-| 3  | Layer direction & thin routes (<300 lines)    | −200                 | +50    |
-| 4  | React Query key + cache discipline            | −100                 | +50    |
-| 5  | Server state in React Query only              | −100                 | +50    |
-| 6  | Error boundaries, no `console.log`/empty catch| −200                 | +50    |
-| 7  | TypeScript strictness (no `any`, typed SDKs)  | −100                 | +50    |
-| 8  | Remote images via `expo-image`                | −50                  | +50    |
-| 9 | Styling: design tokens / NativeWind, no magic | −50                  | +50    |
-| 10 | Offline & secrets safety                      | −200                 | +50    |
+| #  | Rule                                                  | Penalty / occurrence | Reward |
+| -- | ----------------------------------------------------- | -------------------- | ------ |
+| 1  | Bounded network requests (timeout/abort)              | −1000                | +10    |
+| 2  | Data-first rendering (no blank screens)               | −500                 | +50    |
+| 3  | Feature-first architecture, layer direction, thin routes | −200              | +50    |
+| 4  | React Query key + cache discipline                    | −100                 | +50    |
+| 5  | Server state in React Query only                      | −100                 | +50    |
+| 6  | Error boundaries, no `console.log`/empty catch        | −200                 | +50    |
+| 7  | TypeScript strictness (no `any`, typed SDKs)          | −100                 | +50    |
+| 8  | Remote images via `expo-image`                        | −50                  | +50    |
+| 9  | Styling: design tokens / NativeWind, no magic         | −50                  | +50    |
+| 10 | Offline & secrets safety                              | −200                 | +50    |
 
 **Critical blockers:** Rules **#1** (unbounded request) and **#2** (a screen that can render blank) **block the merge regardless of net score** — these are the direct causes of the app-hang and white-screen reports. Flag them as 🔴 and set the recommendation to Block.
 
@@ -40,7 +40,7 @@ Copy this checklist and work through it:
 
 **Step 1 — Get the diff.** Prefer `git diff <base>...HEAD` (or the PR diff via `gh pr diff <n>`). Review the changed hunks; only flag pre-existing issues if the PR touches those lines.
 
-**Step 2 — Classify.** `app/**` = routes (must be thin), `**/screens/**` = screens, `**/hooks/**` = data/logic, `**/lib/**` or `**/services/**` = infrastructure, `**/components|ui/**` = presentational. Rules apply differently per layer (see each reference).
+**Step 2 — Classify.** `app/routes/**` = routes (must be thin — import one feature page and render it), `src/features/<feature>/**` = feature-owned screens/components/hooks/types, `src/shared/**` (`design`, `atoms`, `molecules`, `organisms`, `components`) = cross-feature UI, `src/lib/**` (`endpoints`, `api`, `data-fetch`, `hooks`, `sendbird`, `storage`) = infrastructure with no UI, `src/providers/**` = composition. Rules apply differently per layer (see each reference).
 
 **Step 3 — Score.** For each rule, open `references/NN-<rule>.md` for the detection patterns and bad/good examples. Only load the references you need.
 
@@ -52,14 +52,14 @@ Copy this checklist and work through it:
 
 1. [Bounded network requests](references/01-network-timeouts.md) — every `fetch`/request has an `AbortController` timeout.
 2. [Data-first rendering](references/02-data-first-rendering.md) — loading/empty/error/ready states; never branch on `error` before cached `data`.
-3. [Layer direction & thin routes](references/03-layer-architecture.md) — `app → features → shared → lib`; routes hold no logic; files <300 lines.
-4. [React Query discipline](references/05-react-query-discipline.md) — typed key factory, cache tiers, invalidation, refetch policy.
-5. [Server state in React Query only](references/06-state-management.md) — no mirroring server data into `useState`/Context.
-6. [Error handling & logging](references/07-error-handling-logging.md) — route `ErrorBoundary`, no `console.log`, no empty `catch`.
-7. [TypeScript strictness](references/08-typescript-strictness.md) — `strict`, no `any`, typed SDK objects (no `as any`).
-8. [Remote images via expo-image](references/09-images.md) — `expo-image` with `contentFit` + `recyclingKey`.
-9. [Styling & design tokens](references/10-styling-design-system.md) — NativeWind + tokens; no magic hex/spacing; accent used sparingly.
-10. [Offline & secrets safety](references/11-offline-and-security.md) — persisted cache, purge on logout, secrets in secure store.
+3. [Feature-first architecture, layer direction & thin routes](references/03-feature-architecture.md) — `app/routes → src/features → src/shared → src/lib`; routes only render a feature page; features own their code and never import each other; files <300 lines.
+4. [React Query discipline](references/04-react-query-discipline.md) — typed key factory, cache tiers, invalidation, refetch policy.
+5. [Server state in React Query only](references/05-state-management.md) — no mirroring server data into `useState`/Context.
+6. [Error handling & logging](references/06-error-handling-logging.md) — route `ErrorBoundary`, no `console.log`, no empty `catch`.
+7. [TypeScript strictness](references/07-typescript-strictness.md) — `strict`, no `any`, typed SDK objects (no `as any`).
+8. [Remote images via expo-image](references/08-images.md) — `expo-image` with `contentFit` + `recyclingKey`.
+9. [Styling & design tokens](references/09-styling-design-system.md) — NativeWind + tokens; no magic hex/spacing; accent used sparingly.
+10. [Offline & secrets safety](references/10-offline-and-security.md) — persisted cache, purge on logout, secrets in secure store.
 
 ## Output format
 

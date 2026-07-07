@@ -1,25 +1,23 @@
 # Expo / React Native PR Review (Skill)
 
-A 12-rule, reliability-first rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. Works with Cursor, Claude Code, GitHub Copilot, Codex CLI, Gemini CLI, and any other Agent Skills–compatible host.
+A 10-rule, reliability-first rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. Works with Cursor, Claude Code, GitHub Copilot, Codex CLI, Gemini CLI, and any other Agent Skills–compatible host.
 
-The skill scores a diff against twelve weighted rules targeting the failure modes RN apps hit most — hangs, blank/white screens, and broken offline behavior — plus architecture, type safety, and accessibility. Each rule has a penalty for violations and a reward for correct implementation; the agent produces a final **score** and **merge recommendation**.
+The skill scores a diff against ten weighted rules targeting the failure modes RN apps hit most — hangs, blank/white screens, and broken offline behavior — plus feature-first architecture, type safety, and styling. Each rule has a penalty for violations and a reward for correct implementation; the agent produces a final **score** and **merge recommendation**.
 
 ## What it covers
 
-| #  | Rule                                          | Penalty / occurrence | Reward |
-| -- | --------------------------------------------- | -------------------- | ------ |
-| 1  | Bounded network requests (timeout/abort)      | −1000                | +10    |
-| 2  | Data-first rendering (no blank screens)       | −500                 | +50    |
-| 3  | Layer direction & thin routes (<500 lines)    | −200                 | +50    |
-| 4  | No work in `renderItem` / list performance    | −200                 | +50    |
-| 5  | React Query key + cache discipline            | −100                 | +50    |
-| 6  | Server state in React Query only              | −100                 | +50    |
-| 7  | Error boundaries, no `console.log`/empty catch| −200                 | +50    |
-| 8  | TypeScript strictness (no `any`, typed SDKs)  | −100                 | +50    |
-| 9  | Remote images via `expo-image`                | −50                  | +50    |
-| 10 | Styling: design tokens / NativeWind, no magic | −50                  | +50    |
-| 11 | Offline & secrets safety                      | −200                 | +50    |
-| 12 | Accessibility                                 | −50                  | +50    |
+| #  | Rule                                                  | Penalty / occurrence | Reward |
+| -- | ----------------------------------------------------- | -------------------- | ------ |
+| 1  | Bounded network requests (timeout/abort)              | −1000                | +10    |
+| 2  | Data-first rendering (no blank screens)               | −500                 | +50    |
+| 3  | Feature-first architecture, layer direction, thin routes | −200              | +50    |
+| 4  | React Query key + cache discipline                    | −100                 | +50    |
+| 5  | Server state in React Query only                      | −100                 | +50    |
+| 6  | Error boundaries, no `console.log`/empty catch        | −200                 | +50    |
+| 7  | TypeScript strictness (no `any`, typed SDKs)          | −100                 | +50    |
+| 8  | Remote images via `expo-image`                        | −50                  | +50    |
+| 9  | Styling: design tokens / NativeWind, no magic         | −50                  | +50    |
+| 10 | Offline & secrets safety                              | −200                 | +50    |
 
 Rules **#1** and **#2** are critical and **block the merge** regardless of net score. See [`SKILL.md`](SKILL.md) for the full workflow and [`references/`](references/) for per-rule detection patterns, bad/good examples, and edge cases.
 
@@ -35,16 +33,14 @@ expo-react-native-pr-review/     ← skill package (what agents load)
 └── references/
     ├── 01-network-timeouts.md
     ├── 02-data-first-rendering.md
-    ├── 03-layer-architecture.md
-    ├── 04-list-performance.md
-    ├── 05-react-query-discipline.md
-    ├── 06-state-management.md
-    ├── 07-error-handling-logging.md
-    ├── 08-typescript-strictness.md
-    ├── 09-images.md
-    ├── 10-styling-design-system.md
-    ├── 11-offline-and-security.md
-    └── 12-accessibility.md
+    ├── 03-feature-architecture.md
+    ├── 04-react-query-discipline.md
+    ├── 05-state-management.md
+    ├── 06-error-handling-logging.md
+    ├── 07-typescript-strictness.md
+    ├── 08-images.md
+    ├── 09-styling-design-system.md
+    └── 10-offline-and-security.md
 ```
 
 ## Publishing on GitHub
