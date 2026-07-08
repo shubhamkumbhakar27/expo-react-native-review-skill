@@ -1,4 +1,4 @@
-# Rule 5 — React Query key + cache discipline
+# Rule 4 — React Query key + cache discipline
 
 **Penalty −100/occurrence · Reward +50**
 

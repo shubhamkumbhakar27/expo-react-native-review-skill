@@ -44,5 +44,5 @@ export async function api<T>(path: string, init: RequestInit = {}, timeoutMs = 1
 
 ## Edge cases
 - Streaming/long-poll endpoints may use a longer, explicit timeout — acceptable if intentional and documented.
-- The transport must **not** navigate or show alerts on error; surface a typed error and let providers react (see rule 7).
-- Connectivity/timeout errors must **never** clear the session — only a real 401 on the auth probe may (see rule 11).
+- The transport must **not** navigate or show alerts on error; surface a typed error and let providers react (see rule 6).
+- Connectivity/timeout errors must **never** clear the session — only a real 401 on the auth probe may (see rule 10).

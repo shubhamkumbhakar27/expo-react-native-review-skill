@@ -1,4 +1,4 @@
-# Rule 6 — Server state in React Query only
+# Rule 5 — Server state in React Query only
 
 **Penalty −100/occurrence · Reward +50**
 

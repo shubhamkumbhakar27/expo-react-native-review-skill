@@ -1,11 +1,11 @@
 ---
 name: expo-react-native-pr-review
-description: Review Expo / React Native pull requests (expo-router, React Query, NativeWind) against a weighted, reliability-first rubric — request timeouts, data-first rendering, feature-first architecture & layer direction, React Query discipline, server state, TypeScript strictness, error handling, images, styling, and offline/security. Produces a score and a merge recommendation. Use when reviewing a pull request, diff, or code changes in a React Native / Expo app, or when the user asks for a code review, PR review, or audit of mobile app code.
+description: Review Expo / React Native pull requests (expo-router, React Query, NativeWind) against a weighted, reliability-first rubric — request timeouts, data-first rendering, feature-first architecture & layer direction, React Query discipline, server state, TypeScript strictness, error handling, images, styling, offline/security, and fail-fast config/env validation. Produces a score and a merge recommendation. Use when reviewing a pull request, diff, or code changes in a React Native / Expo app, or when the user asks for a code review, PR review, or audit of mobile app code.
 ---
 
 # Expo / React Native PR Review
 
-A 10-rule weighted rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. It scores a diff against ten rules covering the three failure modes RN apps are most prone to — **latency**, **availability** (white/blank screens, hangs), and **broken offline behavior** — plus feature-first architecture, type safety, and styling. Each rule has a **penalty** per violation and a **reward** for correct implementation; the review ends with a **net score** and a **merge recommendation**.
+An 11-rule weighted rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. It scores a diff against eleven rules covering the three failure modes RN apps are most prone to — **latency**, **availability** (white/blank screens, hangs), and **broken offline behavior** — plus feature-first architecture, type safety, styling, and fail-fast config validation. Each rule has a **penalty** per violation and a **reward** for correct implementation; the review ends with a **net score** and a **merge recommendation**.
 
 **Stack assumptions:** `expo` (expo-router), `react-native`, `@tanstack/react-query`, `nativewind`, a persisted offline-first query cache, and native SDKs (e.g. Sendbird). Rules degrade gracefully for any RN app; adjust the examples to your stack.
 
@@ -23,6 +23,7 @@ A 10-rule weighted rubric for reviewing **Expo / React Native** pull requests, p
 | 8  | Remote images via `expo-image`                        | −50                  | +50    |
 | 9  | Styling: design tokens / NativeWind, no magic         | −50                  | +50    |
 | 10 | Offline & secrets safety                              | −200                 | +50    |
+| 11 | Config & env validation (fail fast, zod)              | −100                 | +50    |
 
 **Critical blockers:** Rules **#1** (unbounded request) and **#2** (a screen that can render blank) **block the merge regardless of net score** — these are the direct causes of the app-hang and white-screen reports. Flag them as 🔴 and set the recommendation to Block.
 
@@ -60,6 +61,7 @@ Copy this checklist and work through it:
 8. [Remote images via expo-image](references/08-images.md) — `expo-image` with `contentFit` + `recyclingKey`.
 9. [Styling & design tokens](references/09-styling-design-system.md) — NativeWind + tokens; no magic hex/spacing; accent used sparingly.
 10. [Offline & secrets safety](references/10-offline-and-security.md) — persisted cache, purge on logout, secrets in secure store.
+11. [Config & env validation](references/11-config-env-validation.md) — one central `env` module, zod-validated at startup; required vars fail fast, no silent `?? ""` on required config.
 
 ## Output format
 

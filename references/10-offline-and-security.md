@@ -1,4 +1,4 @@
-# Rule 11 — Offline & secrets safety
+# Rule 10 — Offline & secrets safety
 
 **Penalty −200/occurrence · Reward +50**
 

@@ -1,4 +1,4 @@
-# Rule 10 — Styling & design tokens
+# Rule 9 — Styling & design tokens
 
 **Penalty −50/occurrence · Reward +50**
 

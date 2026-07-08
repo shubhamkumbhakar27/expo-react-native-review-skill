@@ -1,4 +1,4 @@
-# Rule 9 — Remote images via `expo-image`
+# Rule 8 — Remote images via `expo-image`
 
 **Penalty −50/occurrence · Reward +50**
 

@@ -1,8 +1,8 @@
 # Expo / React Native PR Review (Skill)
 
-A 10-rule, reliability-first rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. Works with Cursor, Claude Code, GitHub Copilot, Codex CLI, Gemini CLI, and any other Agent Skills–compatible host.
+An 11-rule, reliability-first rubric for reviewing **Expo / React Native** pull requests, packaged as an Agent Skill. Works with Cursor, Claude Code, GitHub Copilot, Codex CLI, Gemini CLI, and any other Agent Skills–compatible host.
 
-The skill scores a diff against ten weighted rules targeting the failure modes RN apps hit most — hangs, blank/white screens, and broken offline behavior — plus feature-first architecture, type safety, and styling. Each rule has a penalty for violations and a reward for correct implementation; the agent produces a final **score** and **merge recommendation**.
+The skill scores a diff against eleven weighted rules targeting the failure modes RN apps hit most — hangs, blank/white screens, and broken offline behavior — plus feature-first architecture, type safety, styling, and fail-fast config validation. Each rule has a penalty for violations and a reward for correct implementation; the agent produces a final **score** and **merge recommendation**.
 
 ## What it covers
 
@@ -18,6 +18,7 @@ The skill scores a diff against ten weighted rules targeting the failure modes R
 | 8  | Remote images via `expo-image`                        | −50                  | +50    |
 | 9  | Styling: design tokens / NativeWind, no magic         | −50                  | +50    |
 | 10 | Offline & secrets safety                              | −200                 | +50    |
+| 11 | Config & env validation (fail fast, zod)              | −100                 | +50    |
 
 Rules **#1** and **#2** are critical and **block the merge** regardless of net score. See [`SKILL.md`](SKILL.md) for the full workflow and [`references/`](references/) for per-rule detection patterns, bad/good examples, and edge cases.
 
@@ -40,7 +41,8 @@ expo-react-native-pr-review/     ← skill package (what agents load)
     ├── 07-typescript-strictness.md
     ├── 08-images.md
     ├── 09-styling-design-system.md
-    └── 10-offline-and-security.md
+    ├── 10-offline-and-security.md
+    └── 11-config-env-validation.md
 ```
 
 ## Publishing on GitHub

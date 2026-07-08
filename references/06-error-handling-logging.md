@@ -1,4 +1,4 @@
-# Rule 7 — Error handling & logging
+# Rule 6 — Error handling & logging
 
 **Penalty −200/occurrence · Reward +50**
 

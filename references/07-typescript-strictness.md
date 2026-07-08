@@ -1,4 +1,4 @@
-# Rule 8 — TypeScript strictness
+# Rule 7 — TypeScript strictness
 
 **Penalty −100/occurrence · Reward +50**
 
