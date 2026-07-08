@@ -29,11 +29,30 @@ src/
 ## Layer direction
 `app/routes → src/features → src/shared → src/lib` (with `src/lib/sendbird` and `src/lib/storage` as infra consumed downward, never importing upward). Lower layers never import from higher ones, and **features never import other features** — share code via `src/shared`/`src/lib`, or consume a sibling only through its public `index.ts`.
 
+## Thin routes (hard rule)
+**A file under `app/` is a route, never a screen.** It exists only to map a URL to a page/feature component and render it. No route file may define the complete component inline.
+
+- Every route is `import { XyzPage } from "@/components/pages/xyz-page"` (or `@/features/<feature>`) and `return <XyzPage />;` — nothing else.
+- The full screen (state, hooks, effects, JSX tree, data wiring) lives in a page component under `src/components/pages/<name>-page.tsx` (or the feature folder), exported as a named `XyzPage`.
+- Route component names end in `Route` (e.g. `LoginRoute`); page components end in `Page` (e.g. `LoginPage`).
+- The only logic allowed in a route is trivial routing glue that can't live elsewhere: an auth `<Redirect>` gate, or `app/_layout.tsx` composing providers + `<Stack>`.
+
+A well-formed route is ~3–5 lines:
+```tsx
+// app/login.tsx — thin route
+import { LoginPage } from "@/components/pages/login-page";
+
+export default function LoginRoute() {
+  return <LoginPage />;
+}
+```
+
 ## Why it matters
 Grouping by technical type scatters one feature across the tree, so a change means editing many unrelated folders. Logic in routes and cross-feature imports create god-files and tangled coupling that block reuse, testing, and safe refactors. Feature-first folders with one-directional imports keep each domain cohesive and independently reviewable.
 
 ## Detection
-- A file in `app/routes/**` doing anything beyond importing + rendering a feature page: `useQuery`, `fetch`, `useState`/effects, animation math, platform branching, or large JSX trees. Routes are single-responsibility — pick a page, render it.
+- A file in `app/**` doing anything beyond importing + rendering a page/feature component: `useQuery`, `fetch`, `useState`/`useReducer`/effects, animation math, platform branching, or any JSX beyond `<XyzPage />`. Routes are single-responsibility — pick a page, render it. (Exception: a trivial auth `<Redirect>` gate, or `_layout.tsx`.)
+- A route that defines the screen inline instead of delegating to a `src/components/pages/<name>-page.tsx` (or `src/features/<feature>`) component.
 - Feature-specific code placed in `src/shared/**` (or any generic bucket) instead of its `src/features/<feature>/` folder.
 - One feature importing another feature's internals: a deep `@/features/<other>/...` import (allowed only through the sibling's public `index.ts` — prefer lifting shared code to `src/shared`).
 - `src/shared/**` or `src/lib/**` importing from `src/features/**` or `app/**` (upward import).
@@ -63,8 +82,8 @@ export { EventDetailPage } from "./screens/event-detail-page";
 ```
 
 ## Scoring
-- −200 per route holding logic, per cross-feature/upward import, per feature-specific file in `src/shared`, per data/api logic outside `src/lib`, or per file >~300 lines.
-- +50 when a PR keeps routes thin and colocates a feature's code under `src/features/<feature>` behind a public entrypoint.
+- −200 per route holding logic or defining a screen inline, per cross-feature/upward import, per feature-specific file in `src/shared`, per data/api logic outside `src/lib`, or per file >~300 lines.
+- +50 when a PR keeps routes thin (delegating to a `src/components/pages/*` or `src/features/<feature>` component) and colocates a feature's code behind a public entrypoint.
 
 ## Edge cases
 - `app/_layout.tsx` composing providers + `<Stack>` is fine — that's the composition root, not logic.

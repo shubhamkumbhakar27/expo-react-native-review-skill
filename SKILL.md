@@ -40,7 +40,7 @@ Copy this checklist and work through it:
 
 **Step 1 — Get the diff.** Prefer `git diff <base>...HEAD` (or the PR diff via `gh pr diff <n>`). Review the changed hunks; only flag pre-existing issues if the PR touches those lines.
 
-**Step 2 — Classify.** `app/routes/**` = routes (must be thin — import one feature page and render it), `src/features/<feature>/**` = feature-owned screens/components/hooks/types, `src/shared/**` (`design`, `atoms`, `molecules`, `organisms`, `components`) = cross-feature UI, `src/lib/**` (`endpoints`, `api`, `data-fetch`, `hooks`, `sendbird`, `storage`) = infrastructure with no UI, `src/providers/**` = composition. Rules apply differently per layer (see each reference).
+**Step 2 — Classify.** `app/**` = routes (must be thin — import one page/feature component and render it, never define the screen inline), `src/components/pages/**` or `src/features/<feature>/**` = the page/screen components a route delegates to (own their state/hooks/JSX), `src/shared/**` (`design`, `atoms`, `molecules`, `organisms`, `components`) = cross-feature UI, `src/lib/**` (`endpoints`, `api`, `data-fetch`, `hooks`, `sendbird`, `storage`) = infrastructure with no UI, `src/providers/**` = composition. Rules apply differently per layer (see each reference).
 
 **Step 3 — Score.** For each rule, open `references/NN-<rule>.md` for the detection patterns and bad/good examples. Only load the references you need.
 
@@ -52,7 +52,7 @@ Copy this checklist and work through it:
 
 1. [Bounded network requests](references/01-network-timeouts.md) — every `fetch`/request has an `AbortController` timeout.
 2. [Data-first rendering](references/02-data-first-rendering.md) — loading/empty/error/ready states; never branch on `error` before cached `data`.
-3. [Feature-first architecture, layer direction & thin routes](references/03-feature-architecture.md) — `app/routes → src/features → src/shared → src/lib`; routes only render a feature page; features own their code and never import each other; files <300 lines.
+3. [Feature-first architecture, layer direction & thin routes](references/03-feature-architecture.md) — `app/routes → src/features → src/shared → src/lib`; **routes are thin** — a file under `app/` only maps a URL to a page/feature component (`return <XyzPage />`) and never defines the screen inline; features own their code and never import each other; files <300 lines.
 4. [React Query discipline](references/04-react-query-discipline.md) — typed key factory, cache tiers, invalidation, refetch policy.
 5. [Server state in React Query only](references/05-state-management.md) — no mirroring server data into `useState`/Context.
 6. [Error handling & logging](references/06-error-handling-logging.md) — route `ErrorBoundary`, no `console.log`, no empty `catch`.
